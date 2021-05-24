@@ -1,0 +1,5 @@
+type Kryptomena {
+    id: ID!
+    jmeno: String!
+    cena: Int!
+}

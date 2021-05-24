@@ -1,0 +1,8 @@
+type Query {
+  viewer: User!
+  viewerKryptomena: Kryptomena!
+}
+
+type Mutation {
+  updateName(name: String!): User!
+}
