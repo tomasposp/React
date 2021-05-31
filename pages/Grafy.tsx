@@ -17,11 +17,18 @@ export default function Page() {
 
   })
 
+const [Change,SetChange] = useState("_4h");
+const [Currency,SetCurrency] = useState("EUR");
+const [Shop,SetShop] = useState("Binance");
+
   const query = gql`
     query CandlestickData(
       $resolution: TimeResolution = _1d
       $start: Int = 1606172400
       $end: Int = 1621807200
+      $currency: String = "EUR"
+      $Shop:String = "Binance"
+      
     ) {
       timeseries(
         resolution: $resolution
@@ -33,9 +40,9 @@ export default function Page() {
 
         m: markets(
           filter: {
-            exchangeSymbol: { _eq: "Binance" }
+            exchangeSymbol: { _eq: $Shop }
             baseSymbol: { _eq: "BTC" }
-            quoteSymbol: { _eq: "EUR" }
+            quoteSymbol: { _eq: $currency }
           }
         ) {
           highPrice
@@ -44,11 +51,12 @@ export default function Page() {
     }
   `
 
+
   const [data, setData] = useState([])
   let hodnota: any[] = [];
   let date = [];
 
-  client.query({ query }).then((response) => {
+  client.query({ query:query, variables:{resolution:Change, currency: Currency} }).then((response) => {
     setData(response.data.timeseries)
   })
   console.log(data)
@@ -61,7 +69,7 @@ export default function Page() {
     
         datasets: [
           {
-            label: "Binance-BTC",
+            label: Shop + Currency + Change,
             data:hodnota,
            
             backgroundColor: 'rgb(70, 200, 70)',
@@ -80,8 +88,17 @@ export default function Page() {
       <main className={styles.main}>
         <h1 className={styles.title}></h1>
         <p>
+
           <h2 className={styles.title2}>
            
+<button onClick={() => SetChange("_1d")}>1D</button>
+<button onClick={() => SetChange("_4h")}>4H</button>
+<button onClick={() => SetChange("_1h")}>1H</button>
+<button onClick={() => SetCurrency("EUR")}>EUR</button>
+<button onClick={() => SetCurrency("USDT")}>USD</button>
+
+
+
 
               {data.map((item) => {
                   hodnota.push(item.m[0].highPrice);
